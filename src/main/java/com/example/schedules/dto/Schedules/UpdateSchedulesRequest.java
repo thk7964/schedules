@@ -1,4 +1,7 @@
 package com.example.schedules.dto.Schedules;
 
-public class UpdateSchedulesRequest {
+import lombok.Getter;
+
+@Getter
+public class UpdateSchedulesRequest extends SchedulesRequest{
 }

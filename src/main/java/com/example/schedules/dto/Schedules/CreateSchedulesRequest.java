@@ -1,5 +1,8 @@
 package com.example.schedules.dto.Schedules;
 
-public class CreateSchedulesRequest {
+import lombok.Getter;
 
+@Getter
+public class CreateSchedulesRequest extends SchedulesRequest {
+    private String name;
 }
