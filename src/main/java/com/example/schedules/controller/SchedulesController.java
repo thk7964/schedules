@@ -31,13 +31,13 @@ public class SchedulesController {
         List<GetOneSchedulesResponse> result = schedulesService.getAllSchedule();
         return ResponseEntity.status(HttpStatus.OK).body(result);//전체 조회 정보와 200 상태코드 반환
     }
-    //일정 조회
+    //일정 수정
     @PutMapping("/schedule/{scheduleId}")
     public ResponseEntity<UpdateSchedulesResponse> update(@PathVariable Long scheduleId, @RequestBody UpdateSchedulesRequest request) {
         UpdateSchedulesResponse result = schedulesService.update(scheduleId, request);
         return ResponseEntity.status(HttpStatus.OK).body(result);//수정된 일정 정보와 200 상태코드 반환
     }
-    //알정 삭제
+    //일정 삭제
     @DeleteMapping("/schedule/{scheduleId}")
     public ResponseEntity<Void> deleteSchedule(@PathVariable Long scheduleId) {
         schedulesService.delete(scheduleId);

@@ -13,8 +13,11 @@ public class Schedules extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String title;
+    @Column(nullable = false)
     private String content;
+    @Column(nullable = false)
     private String name;
 
     public Schedules(String title, String content, String name){
