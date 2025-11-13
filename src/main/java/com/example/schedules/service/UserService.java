@@ -4,8 +4,10 @@ import com.example.schedules.dto.Users.*;
 import com.example.schedules.entity.User;
 import com.example.schedules.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,7 @@ public class UserService {
 
     @Transactional
     public CreateUserResponse save(CreateUserRequest request) {
-        User user = new User(request.getUsername(), request.getEmail());
+        User user = new User(request.getUsername(), request.getEmail(),request.getPassword());
         User saveUser = userRepository.save(user);
         return new CreateUserResponse(
                 saveUser.getId(),
@@ -71,7 +73,8 @@ public class UserService {
         );
         user.update(
                 request.getUsername(),
-                request.getEmail()
+                request.getEmail(),
+                request.getPassword()
         );
         return new UpdateUserResponse(
                 user.getId(),
@@ -90,5 +93,16 @@ public class UserService {
             throw new IllegalStateException("존재하지 않는 유저입니다.");
         }
         userRepository.deleteById(userId);
+    }
+
+    @Transactional
+    public User userLogin(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,"존재하지 않는 이메일입니다.")
+        );
+        if (!user.getPassword().equals(request.getPassword())){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"비밀번호가 틀렸습니다.");
+        }
+        return user;
     }
 }

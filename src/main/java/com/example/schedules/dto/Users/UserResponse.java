@@ -13,7 +13,7 @@ public class UserResponse {
     private final LocalDateTime modifiedAt;
 
 
-    public UserResponse(Long id, String username, String email, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public UserResponse(Long id, String username, String email,LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
         this.username = username;
         this.email = email;

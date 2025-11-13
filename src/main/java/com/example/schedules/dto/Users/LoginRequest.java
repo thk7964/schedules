@@ -3,8 +3,7 @@ package com.example.schedules.dto.Users;
 import lombok.Getter;
 
 @Getter
-public class UserRequest {
-    private String username;
+public class LoginRequest {
     private String email;
     private String password;
 }

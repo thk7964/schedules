@@ -2,11 +2,15 @@ package com.example.schedules.controller;
 
 import com.example.schedules.dto.Schedules.*;
 import com.example.schedules.dto.Users.*;
+import com.example.schedules.entity.User;
 import com.example.schedules.service.UserService;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -43,6 +47,23 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();//삭제 성공시 204 상태코드 반환
+    }
+    //로그인
+    @PostMapping("/users/login")
+    public ResponseEntity<Void> userLogin(@Valid @RequestBody LoginRequest request, HttpSession session) {
+        if (session.getAttribute("loginUser") != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 로그인된 사용자입니다.");
+        }
+
+        User user = userService.userLogin(request);
+        session.setAttribute("loginUser", user.getId());//로그인한 사용자 정보가 서버 메모리에 세션으로 저장된다.
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+    @PostMapping("/users/logout")
+    public ResponseEntity<Void> logout(HttpSession session){
+
+        session.invalidate();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
 
