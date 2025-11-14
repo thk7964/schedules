@@ -4,5 +4,4 @@ import lombok.Getter;
 
 @Getter
 public class CreateSchedulesRequest extends SchedulesRequest {
-    private String name;
 }

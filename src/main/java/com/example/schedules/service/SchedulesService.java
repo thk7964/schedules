@@ -2,7 +2,9 @@ package com.example.schedules.service;
 
 import com.example.schedules.dto.Schedules.*;
 import com.example.schedules.entity.Schedules;
+import com.example.schedules.entity.User;
 import com.example.schedules.repository.SchedulesRepository;
+import com.example.schedules.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,18 +16,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SchedulesService {
     private final SchedulesRepository schedulesRepository;
+    private final UserRepository userRepository;
 
     //일정 생성
     @Transactional
-    public CreateSchedulesResponse save(CreateSchedulesRequest request){
-        Schedules schedule = new Schedules(request.getTitle(),request.getContent(),request.getName());
+    public CreateSchedulesResponse save(CreateSchedulesRequest request , Long userId){
+        User user = userRepository.findById(userId).orElseThrow(
+                ()-> new IllegalStateException("해당 유저가 존재하지 않습니다.")
+        );
+
+        Schedules schedule = new Schedules(request.getTitle(),request.getContent(), user);
         Schedules saveSchedule = schedulesRepository.save(schedule);
 
         return new CreateSchedulesResponse(
                 saveSchedule.getId(),
                 saveSchedule.getTitle(),
                 saveSchedule.getContent(),
-                saveSchedule.getName(),
+                saveSchedule.getUser().getUsername(),
                 saveSchedule.getCreatedAt(),
                 saveSchedule.getModifiedAt()
         );
@@ -34,6 +41,7 @@ public class SchedulesService {
     //일정 단 건 조회
     @Transactional(readOnly = true)
     public GetOneSchedulesResponse getOneSchedule(Long scheduleId){
+
         //일정이 없으면 예외 발생
         Schedules schedule = schedulesRepository.findById(scheduleId).orElseThrow(
                 ()-> new IllegalStateException("존재하지 않는 일정입니다.")
@@ -42,7 +50,7 @@ public class SchedulesService {
                 schedule.getId(),
                 schedule.getTitle(),
                 schedule.getContent(),
-                schedule.getName(),
+                schedule.getUser().getUsername(),
                 schedule.getCreatedAt(),
                 schedule.getModifiedAt()
         );
@@ -59,7 +67,7 @@ public class SchedulesService {
                     schedule.getId(),
                     schedule.getTitle(),
                     schedule.getContent(),
-                    schedule.getName(),
+                    schedule.getUser().getUsername(),
                     schedule.getCreatedAt(),
                     schedule.getModifiedAt()
             );
@@ -70,10 +78,15 @@ public class SchedulesService {
     //일정 수정
     @Transactional
     public UpdateSchedulesResponse update(Long scheduleId, UpdateSchedulesRequest request){
+
         //수정할 일정이 없으면 예외 발생
         Schedules schedules=  schedulesRepository.findById(scheduleId).orElseThrow(
                 ()-> new IllegalStateException("존재하지 않는 일정입니다.")
         );
+
+//        if (!schedules.getUser().getId().equals(loginUser.getId())) {
+//            throw new IllegalStateException("본인이 작성한 일정만 수정할 수 있습니다.");
+//        }
 
         //제목과 작성자명 업데이트
         schedules.update(
@@ -84,7 +97,7 @@ public class SchedulesService {
                 schedules.getId(),
                 schedules.getTitle(),
                 schedules.getContent(),
-                schedules.getName(),
+                schedules.getUser().getUsername(),
                 schedules.getCreatedAt(),
                 schedules.getModifiedAt()
         );
