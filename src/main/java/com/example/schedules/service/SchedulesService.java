@@ -3,6 +3,8 @@ package com.example.schedules.service;
 import com.example.schedules.dto.Schedules.*;
 import com.example.schedules.entity.Schedules;
 import com.example.schedules.entity.User;
+import com.example.schedules.exception.ErrorCode;
+import com.example.schedules.exception.GlobalException;
 import com.example.schedules.repository.SchedulesRepository;
 import com.example.schedules.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,7 @@ public class SchedulesService {
     @Transactional
     public CreateSchedulesResponse save(CreateSchedulesRequest request , Long userId){
         User user = userRepository.findById(userId).orElseThrow(
-                ()-> new IllegalStateException("해당 유저가 존재하지 않습니다.")
+                ()-> new GlobalException(ErrorCode.USER_NOT_FOUND)
         );
 
         Schedules schedule = new Schedules(request.getTitle(),request.getContent(), user);
@@ -44,7 +46,7 @@ public class SchedulesService {
 
         //일정이 없으면 예외 발생
         Schedules schedule = schedulesRepository.findById(scheduleId).orElseThrow(
-                ()-> new IllegalStateException("존재하지 않는 일정입니다.")
+                ()-> new GlobalException(ErrorCode.SCHEDULE_NOT_FOUND)
         );
         return new GetOneSchedulesResponse(
                 schedule.getId(),
@@ -81,7 +83,7 @@ public class SchedulesService {
 
         //수정할 일정이 없으면 예외 발생
         Schedules schedules=  schedulesRepository.findById(scheduleId).orElseThrow(
-                ()-> new IllegalStateException("존재하지 않는 일정입니다.")
+                ()-> new GlobalException(ErrorCode.SCHEDULE_NOT_FOUND)
         );
 
 //        if (!schedules.getUser().getId().equals(loginUser.getId())) {
@@ -108,7 +110,7 @@ public class SchedulesService {
         //해당 일정 존재유무 확인 없으면 예외 발생
         boolean existence = schedulesRepository.existsById(scheduleId);
         if(!existence){
-            throw new IllegalStateException("존재하지 않는 일정입니다..");
+            throw new GlobalException(ErrorCode.SCHEDULE_NOT_FOUND);
         }
         //존재하면 삭제
         schedulesRepository.deleteById(scheduleId);

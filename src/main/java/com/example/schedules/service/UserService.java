@@ -2,12 +2,12 @@ package com.example.schedules.service;
 
 import com.example.schedules.dto.Users.*;
 import com.example.schedules.entity.User;
+import com.example.schedules.exception.ErrorCode;
+import com.example.schedules.exception.GlobalException;
 import com.example.schedules.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public GetOneUserResponse getOneUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 유저입니다.")
+                () -> new GlobalException(ErrorCode.USER_NOT_FOUND)
         );
         return new GetOneUserResponse(
                 user.getId(),
@@ -69,7 +69,7 @@ public class UserService {
     @Transactional
     public UpdateUserResponse updateUser(Long userId, UpdateUserRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 유저입니다.")
+                () -> new GlobalException(ErrorCode.USER_NOT_FOUND)
         );
         user.update(
                 request.getUsername(),
@@ -90,7 +90,7 @@ public class UserService {
     public void deleteUser(Long userId) {
         boolean existence = userRepository.existsById(userId);
         if(!existence){
-            throw new IllegalStateException("존재하지 않는 유저입니다.");
+            throw new GlobalException(ErrorCode.USER_NOT_FOUND);
         }
         userRepository.deleteById(userId);
     }
@@ -98,10 +98,10 @@ public class UserService {
     @Transactional
     public User userLogin(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,"존재하지 않는 이메일입니다.")
+                () -> new GlobalException(ErrorCode.EMAIL_NOT_FOUND)
         );
         if (!user.getPassword().equals(request.getPassword())){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"비밀번호가 틀렸습니다.");
+            throw new GlobalException(ErrorCode.INVALID_SCHEDULE_PASSWORD);
         }
         return user;
     }
