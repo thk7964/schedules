@@ -1,5 +1,6 @@
 package com.example.schedules.service;
 
+import com.example.schedules.config.PasswordEncoder;
 import com.example.schedules.dto.Users.*;
 import com.example.schedules.entity.User;
 import com.example.schedules.exception.ErrorCode;
@@ -17,11 +18,12 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public CreateUserResponse save(CreateUserRequest request) {
-        User user = new User(request.getUsername(), request.getEmail(),request.getPassword());
+        String passwordEncoded = passwordEncoder.encode(request.getPassword());
+        User user = new User(request.getUsername(), request.getEmail(), passwordEncoded);
         User saveUser = userRepository.save(user);
         return new CreateUserResponse(
                 saveUser.getId(),
@@ -89,7 +91,7 @@ public class UserService {
     @Transactional
     public void deleteUser(Long userId) {
         boolean existence = userRepository.existsById(userId);
-        if(!existence){
+        if (!existence) {
             throw new GlobalException(ErrorCode.USER_NOT_FOUND);
         }
         userRepository.deleteById(userId);
@@ -100,7 +102,8 @@ public class UserService {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new GlobalException(ErrorCode.EMAIL_NOT_FOUND)
         );
-        if (!user.getPassword().equals(request.getPassword())){
+        //비밀번호 검증
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new GlobalException(ErrorCode.INVALID_SCHEDULE_PASSWORD);
         }
         return user;
