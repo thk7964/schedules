@@ -3,6 +3,7 @@ package com.example.schedules.controller;
 import com.example.schedules.dto.Schedules.*;
 import com.example.schedules.service.SchedulesService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class SchedulesController {
 
     //일정 생성
     @PostMapping("/schedules")
-    public ResponseEntity<CreateSchedulesResponse> createSchedule(@RequestBody CreateSchedulesRequest request, HttpSession session) {
+    public ResponseEntity<CreateSchedulesResponse> createSchedule(@Valid @RequestBody CreateSchedulesRequest request, HttpSession session) {
         Long loginUser = (Long) session.getAttribute("loginUser");
 
         CreateSchedulesResponse result = schedulesService.save(request, loginUser);
@@ -40,7 +41,7 @@ public class SchedulesController {
 
     //일정 수정
     @PutMapping("/schedules/{scheduleId}")
-    public ResponseEntity<UpdateSchedulesResponse> update(@PathVariable Long scheduleId, @RequestBody UpdateSchedulesRequest request) {
+    public ResponseEntity<UpdateSchedulesResponse> update(@PathVariable Long scheduleId, @Valid @RequestBody UpdateSchedulesRequest request) {
         UpdateSchedulesResponse result = schedulesService.update(scheduleId, request);
         return ResponseEntity.status(HttpStatus.OK).body(result);//수정된 일정 정보와 200 상태코드 반환
     }

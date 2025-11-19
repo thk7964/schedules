@@ -20,7 +20,7 @@ public class UserController {
     private final UserService userService;
     //유저 생성
     @PostMapping("/users")
-    public ResponseEntity<CreateUserResponse> createUser(@RequestBody CreateUserRequest request) {
+    public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
         CreateUserResponse result = userService.save(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);//생성된 유저 정보와 201 상태코드 반환
     }
@@ -38,7 +38,7 @@ public class UserController {
     }
     //유저 수정
     @PutMapping("/users/{userId}")
-    public ResponseEntity<UpdateUserResponse> updateUser(@PathVariable Long userId, @RequestBody UpdateUserRequest request) {
+    public ResponseEntity<UpdateUserResponse> updateUser(@PathVariable Long userId,@Valid @RequestBody UpdateUserRequest request) {
         UpdateUserResponse result = userService.updateUser(userId, request);
         return ResponseEntity.status(HttpStatus.OK).body(result);//수정된 유저 정보와 200 상태코드 반환
     }

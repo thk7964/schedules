@@ -22,9 +22,14 @@ public class UserService {
 
     @Transactional
     public CreateUserResponse save(CreateUserRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new GlobalException(ErrorCode.EMAIL_ALREADY_EXISTS);
+        }
         String passwordEncoded = passwordEncoder.encode(request.getPassword());
         User user = new User(request.getUsername(), request.getEmail(), passwordEncoded);
         User saveUser = userRepository.save(user);
+
+
         return new CreateUserResponse(
                 saveUser.getId(),
                 saveUser.getUsername(),

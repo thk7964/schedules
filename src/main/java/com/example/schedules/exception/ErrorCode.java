@@ -15,7 +15,8 @@ public enum ErrorCode {
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
     INVALID_SCHEDULE_PASSWORD(HttpStatus.UNAUTHORIZED,  "비밀번호가 일치하지 않습니다."),
     COMMENT_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST,  "댓글은 최대 10개까지만 작성할 수 있습니다."),
-    NOT_LOGGED_IN(HttpStatus.UNAUTHORIZED,  "로그인 완료 후 사용 가능합니다.");
+    NOT_LOGGED_IN(HttpStatus.UNAUTHORIZED,  "로그인 완료 후 사용 가능합니다."),
+    EMAIL_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,  "이미 등록된 이메일 입니다.");
 
 
     private final HttpStatus httpStatus;	// HttpStatus
