@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
+@RequiredArgsConstructor // final 필드를 자동으로 생성자 주입
 public class CommentController {
     private final CommentService commentService;
 
     //댓글 생성
     @PostMapping("/schedules/{scheduleId}/comments")
     public ResponseEntity<CreateCommentResponse> createComment(@PathVariable Long scheduleId, @Valid @RequestBody CreateCommentRequest request, HttpSession session) {
-        Long loginUser = (Long) session.getAttribute("loginUser");
+        Long loginUser = (Long) session.getAttribute("loginUser");//로그인한 사용자 id
         CreateCommentResponse commentResult = commentService.commentSave(request, loginUser, scheduleId);
         return ResponseEntity.status(HttpStatus.CREATED).body(commentResult);
     }

@@ -23,7 +23,7 @@ public class CommentService {
     private final SchedulesRepository schedulesRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
-
+    //댓글 생성
     @Transactional
     public CreateCommentResponse commentSave(CreateCommentRequest request, Long userId, Long scheduleId) {
         User user = userRepository.findById(userId).orElseThrow(
@@ -48,7 +48,7 @@ public class CommentService {
                 savecomment.getModifiedAt()
         );
     }
-
+    //댓글 조회
     @Transactional
     public List<GetCommentResponse> getComment() {
         List<Comment> comments = commentRepository.findAll();
@@ -66,7 +66,7 @@ public class CommentService {
         }
         return dtos;
     }
-
+    //댓글 수정
     @Transactional
     public UpdateCommentResponse updateComment(Long commentId, UpdateCommentRequest request) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
@@ -85,7 +85,7 @@ public class CommentService {
         );
 
     }
-
+    //댓글 삭제
     @Transactional
     public void deleteComment(Long commentId) {
         boolean exit = commentRepository.existsById(commentId);

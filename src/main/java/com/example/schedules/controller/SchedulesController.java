@@ -19,8 +19,8 @@ public class SchedulesController {
     //일정 생성
     @PostMapping("/schedules")
     public ResponseEntity<CreateSchedulesResponse> createSchedule(@Valid @RequestBody CreateSchedulesRequest request, HttpSession session) {
+        //세션에서 로그인한 사용자 ID를 가져온다.
         Long loginUser = (Long) session.getAttribute("loginUser");
-
         CreateSchedulesResponse result = schedulesService.save(request, loginUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);//생성된 일정 정보와 201 상태코드 반환
     }

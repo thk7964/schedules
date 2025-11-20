@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository <User, Long> {
    Optional<User> findByEmail(String email);//Optional은 User가 있을 수도 있고 없을 수도 있다는 걸 나타냄
-    boolean existsByEmail(String email);
+    boolean existsByEmail(String email);// 해당 이메일을 가진 사용자가 존재하는지 여부
 }

@@ -19,12 +19,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    //유저 생성
     @Transactional
     public CreateUserResponse save(CreateUserRequest request) {
+        //이전에 생성된 중복된 이메일을 확인한다.
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new GlobalException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
+        // 비밀번호 암호화 후 유저 생성 및 저장한다.
         String passwordEncoded = passwordEncoder.encode(request.getPassword());
         User user = new User(request.getUsername(), request.getEmail(), passwordEncoded);
         User saveUser = userRepository.save(user);
@@ -39,7 +41,7 @@ public class UserService {
         );
     }
 
-
+    //유저 단건 조회
     @Transactional(readOnly = true)
     public GetOneUserResponse getOneUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
@@ -53,8 +55,7 @@ public class UserService {
                 user.getModifiedAt()
         );
     }
-
-
+    //유저 전체 조회
     @Transactional(readOnly = true)
     public List<GetOneUserResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
@@ -71,10 +72,14 @@ public class UserService {
         }
         return dtos;
     }
-
-
+    //유저 수정
     @Transactional
     public UpdateUserResponse updateUser(Long userId, UpdateUserRequest request) {
+        //이메일 중복 체크
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new GlobalException(ErrorCode.EMAIL_ALREADY_EXISTS);
+        }
+        //유저 조회
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new GlobalException(ErrorCode.USER_NOT_FOUND)
         );
@@ -91,8 +96,7 @@ public class UserService {
                 user.getModifiedAt()
         );
     }
-
-
+    //유저 삭제
     @Transactional
     public void deleteUser(Long userId) {
         boolean existence = userRepository.existsById(userId);
@@ -101,9 +105,10 @@ public class UserService {
         }
         userRepository.deleteById(userId);
     }
-
+    // 로그인
     @Transactional
     public User userLogin(LoginRequest request) {
+        // 이메일 존재 여부 확인
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new GlobalException(ErrorCode.EMAIL_NOT_FOUND)
         );

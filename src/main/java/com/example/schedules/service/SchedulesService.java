@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor// 필요한 의존성 자동 주입
 public class SchedulesService {
     private final SchedulesRepository schedulesRepository;
     private final UserRepository userRepository;
@@ -27,6 +27,7 @@ public class SchedulesService {
     //일정 생성
     @Transactional
     public CreateSchedulesResponse save(CreateSchedulesRequest request, Long userId) {
+        // 작성한 유저가 실제 존재한는지 확인
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new GlobalException(ErrorCode.USER_NOT_FOUND)
         );
